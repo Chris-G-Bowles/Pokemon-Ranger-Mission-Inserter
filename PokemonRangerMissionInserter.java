@@ -1,4 +1,4 @@
-//Pokémon Ranger Mission Inserter
+//Pokemon Ranger Mission Inserter
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class PokemonRangerMissionInserter {
 	public static void main(String[] args) {
-		System.out.println("* Pokémon Ranger Mission Inserter *");
+		System.out.println("* Pokemon Ranger Mission Inserter *");
 		if (args.length == 0 || args.length == 3) {
 			Scanner input = new Scanner(System.in);
 			String inputSaveFileLocation;
@@ -20,8 +20,8 @@ public class PokemonRangerMissionInserter {
 			String gameOption;
 			if (args.length == 0) {
 				System.out.println("Select the save file's game:");
-				System.out.println("1) Pokémon Ranger: Shadows of Almia");
-				System.out.println("2) Pokémon Ranger: Guardian Signs");
+				System.out.println("1) Pokemon Ranger: Shadows of Almia");
+				System.out.println("2) Pokemon Ranger: Guardian Signs");
 				System.out.print("Game option: ");
 				gameOption = input.nextLine();
 			} else {
