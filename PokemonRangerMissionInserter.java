@@ -109,26 +109,6 @@ public class PokemonRangerMissionInserter {
 		}
 	}
 	
-	private static boolean isValidInteger(String string) {
-		if (string.length() >= 2 && string.length() <= 10 && string.charAt(0) == '-') {
-			for (int i = 1; i < string.length(); i++) {
-				if (string.charAt(i) < '0' || string.charAt(i) > '9') {
-					return false;
-				}
-			}
-			return true;
-		} else if (string.length() >= 1 && string.length() <= 9) {
-			for (int i = 0; i < string.length(); i++) {
-				if (string.charAt(i) < '0' || string.charAt(i) > '9') {
-					return false;
-				}
-			}
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
 	private static void error(String message) {
 		System.out.println("Error: " + message);
 		System.exit(1);
