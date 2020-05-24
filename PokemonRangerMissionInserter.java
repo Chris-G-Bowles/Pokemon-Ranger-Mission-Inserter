@@ -22,15 +22,15 @@ public class PokemonRangerMissionInserter {
 		} else {
 			inputSaveFileLocation = args[0];
 		}
-		String gameOption;
+		String gameString;
 		if (args.length == 0) {
 			System.out.println("Select the save file's game:");
 			System.out.println("1) Pokemon Ranger: Shadows of Almia");
 			System.out.println("2) Pokemon Ranger: Guardian Signs");
 			System.out.print("Game option: ");
-			gameOption = input.nextLine();
+			gameString = input.nextLine();
 		} else {
-			gameOption = args[1];
+			gameString = args[1];
 		}
 		String outputSaveFileLocation;
 		if (args.length == 0) {
@@ -57,9 +57,9 @@ public class PokemonRangerMissionInserter {
 			inputStream.close();
 			int inputSaveFileSize = 262144;
 			if (inputSaveFile.size() == inputSaveFileSize) {
-				if (isValidInteger(gameOption) &&
-						(Integer.parseInt(gameOption) == 1 || Integer.parseInt(gameOption) == 2)) {
-					int gameIndex = Integer.parseInt(gameOption) - 1;
+				if (isValidInteger(gameString) &&
+						(Integer.parseInt(gameString) == 1 || Integer.parseInt(gameString) == 2)) {
+					int gameIndex = Integer.parseInt(gameString) - 1;
 					String[] insertionFileNames = {"RangerNetMissions2.bin", "RangerNetMissions3.bin"};
 					try {
 						inputStream = new FileInputStream(insertionFileNames[gameIndex]);
