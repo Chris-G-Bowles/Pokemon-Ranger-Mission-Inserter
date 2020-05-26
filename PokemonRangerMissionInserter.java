@@ -1,5 +1,6 @@
 //Pokemon Ranger Mission Inserter
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -22,6 +23,12 @@ public class PokemonRangerMissionInserter {
 		} else {
 			inputSaveFileLocation = args[0];
 		}
+		FileInputStream inputStream1 = null;
+		try {
+			inputStream1 = new FileInputStream(inputSaveFileLocation);
+		} catch (Exception e) {
+			error(inputSaveFileLocation + " is not a valid file.");
+		}
 		String gameString;
 		if (args.length == 0) {
 			System.out.println("Select the save file's game:");
@@ -32,6 +39,16 @@ public class PokemonRangerMissionInserter {
 		} else {
 			gameString = args[1];
 		}
+		Scanner lineInput = new Scanner(gameString);
+		if (!lineInput.hasNextInt()) {
+			error("Invalid game input.");
+		}
+		int gameOption = lineInput.nextInt();
+		if (gameOption < 1 || gameOption > 2) {
+			error("Invalid game option.");
+		}
+		lineInput.close();
+		int gameIndex = gameOption - 1;
 		String outputSaveFileLocation;
 		if (args.length == 0) {
 			System.out.print("Enter the output save file's location: ");
@@ -39,74 +56,86 @@ public class PokemonRangerMissionInserter {
 		} else {
 			outputSaveFileLocation = args[2];
 		}
-		input.close();
-		try {
-			FileInputStream inputStream = new FileInputStream(inputSaveFileLocation);
-			int token;
-			ArrayList<Integer> inputSaveFile = new ArrayList<>();
-			do {
-				try {
-					token = inputStream.read();
-				} catch (Exception e) {
-					token = -1;
-				}
-				if (token >= 0 && token <= 255) {
-					inputSaveFile.add(token);
-				}
-			} while (token >= 0 && token <= 255);
-			inputStream.close();
-			int inputSaveFileSize = 262144;
-			if (inputSaveFile.size() == inputSaveFileSize) {
-				if (isValidInteger(gameString) &&
-						(Integer.parseInt(gameString) == 1 || Integer.parseInt(gameString) == 2)) {
-					int gameIndex = Integer.parseInt(gameString) - 1;
-					String[] insertionFileNames = {"RangerNetMissions2.bin", "RangerNetMissions3.bin"};
-					try {
-						inputStream = new FileInputStream(insertionFileNames[gameIndex]);
-						ArrayList<Integer> insertionFile = new ArrayList<>();
-						do {
-							try {
-								token = inputStream.read();
-							} catch (Exception e) {
-								token = -1;
-							}
-							if (token >= 0 && token <= 255) {
-								insertionFile.add(token);
-							}
-						} while (token >= 0 && token <= 255);
-						inputStream.close();
-						int[] insertionFileSizes = {148034, 153344};
-						if (insertionFile.size() == insertionFileSizes[gameIndex]) {
-							try {
-								FileOutputStream outputStream = new FileOutputStream(outputSaveFileLocation);
-								for (int i = 0; i < inputSaveFile.size() - insertionFile.size(); i++) {
-									outputStream.write(inputSaveFile.get(i));
-								}
-								for (int i = 0; i < insertionFile.size(); i++) {
-									outputStream.write(insertionFile.get(i));
-								}
-								outputStream.close();
-								System.out.println("Success: " + outputSaveFileLocation + " was created!");
-							} catch (Exception e) {
-								System.out.println("Error: Could not create " + outputSaveFileLocation + ".");
-							}
-						} else {
-							System.out.println("Error: " + insertionFileNames[gameIndex] + " is not " +
-									insertionFileSizes[gameIndex] + " bytes in size.");
-						}
-					} catch (Exception e) {
-						System.out.println("Error: " + insertionFileNames[gameIndex] + " not found.");
-					}
-				} else {
-					System.out.println("Error: Invalid game option.");
-				}
-			} else {
-				System.out.println("Error: " + inputSaveFileLocation + " is not " + inputSaveFileSize +
-						" bytes in size.");
-			}
-		} catch (Exception e) {
-			System.out.println("Error: " + inputSaveFileLocation + " not found.");
+		File outputSaveFileDirectory = new File(outputSaveFileLocation).getParentFile();
+		if (outputSaveFileDirectory != null && !outputSaveFileDirectory.exists() && outputSaveFileDirectory.mkdirs()) {
+			System.out.println(outputSaveFileDirectory + " was created.");
 		}
+		FileOutputStream outputStream = null;
+		try {
+			outputStream = new FileOutputStream(outputSaveFileLocation);
+		} catch (Exception e) {
+			error("Unable to create " + outputSaveFileLocation + ".");
+		}
+		input.close();
+		int token1;
+		ArrayList<Integer> inputSaveFile = new ArrayList<>();
+		do {
+			try {
+				token1 = inputStream1.read();
+			} catch (Exception e) {
+				token1 = -1;
+			}
+			if (token1 >= 0 && token1 <= 255) {
+				inputSaveFile.add(token1);
+			}
+		} while (token1 >= 0 && token1 <= 255);
+		try {
+			inputStream1.close();
+		} catch (Exception e) {
+			error("Unable to close inputStream1.");
+		}
+		int inputSaveFileSize = 262144;
+		if (inputSaveFile.size() != inputSaveFileSize) {
+			error(inputSaveFileLocation + " is not " + inputSaveFileSize + " bytes in size.");
+		}
+		String[] insertionFileLocations = {"RangerNetMissions2.bin", "RangerNetMissions3.bin"};
+		FileInputStream inputStream2 = null;
+		try {
+			inputStream2 = new FileInputStream(insertionFileLocations[gameIndex]);
+		} catch (Exception e) {
+			error(insertionFileLocations[gameIndex] + " not found.");
+		}
+		int token2;
+		ArrayList<Integer> insertionFile = new ArrayList<>();
+		do {
+			try {
+				token2 = inputStream2.read();
+			} catch (Exception e) {
+				token2 = -1;
+			}
+			if (token2 >= 0 && token2 <= 255) {
+				insertionFile.add(token2);
+			}
+		} while (token2 >= 0 && token2 <= 255);
+		try {
+			inputStream2.close();
+		} catch (Exception e) {
+			error("Unable to close inputStream2.");
+		}
+		int[] insertionFileSizes = {148034, 153344};
+		if (insertionFile.size() != insertionFileSizes[gameIndex]) {
+			error(insertionFileLocations[gameIndex] + " is not " + insertionFileSizes[gameIndex] + " bytes in size.");
+		}
+		for (int i = 0; i < inputSaveFile.size() - insertionFile.size(); i++) {
+			try {
+				outputStream.write(inputSaveFile.get(i));
+			} catch (Exception e) {
+				error("Unable to write the input save file to " + outputSaveFileLocation + ".");
+			}
+		}
+		for (int i = 0; i < insertionFile.size(); i++) {
+			try {
+				outputStream.write(insertionFile.get(i));
+			} catch (Exception e) {
+				error("Unable to write the insertion file to " + outputSaveFileLocation + ".");
+			}
+		}
+		try {
+			outputStream.close();
+		} catch (Exception e) {
+			error("Unable to close outputStream.");
+		}
+		System.out.println("Success: " + outputSaveFileLocation + " was created!");
 	}
 	
 	private static void error(String message) {
